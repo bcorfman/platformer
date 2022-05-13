@@ -1,0 +1,9 @@
+{
+    "python.autoComplete.extraPaths": [
+        "__pypackages__/3.10/lib"
+    ],
+    "python.analysis.extraPaths": [
+        "__pypackages__/3.10/lib"
+    ],
+    "python.defaultInterpreterPath": "/Users/brandon_corfman/.pyenv/versions/3.10.3/bin/python"
+}
