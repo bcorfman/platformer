@@ -99,7 +99,7 @@ class MyGame(arcade.Window):
         self.player_sprite.center_y = 64
         self.player_list.append(self.player_sprite)
 
-        images = (":resources:images/cybercity_background/far-buildings.png")
+        images = [":resources:images/cybercity_background/far-buildings.png"]
         for count, image in enumerate(images):
             bottom = rise * (len(images) - count - 1)
 
@@ -163,41 +163,15 @@ class MyGame(arcade.Window):
         """
         Render the screen.
         """
-
-        self.frame_count += 1
-
         # This command has to happen before we start drawing
         self.clear()
+
+        self.camera.use()
 
         # Draw all the sprites.
         self.backgrounds.draw()
         self.player_list.draw()
         self.tile_map.sprite_lists["Platforms"].draw()
-
-        if self.last_time and self.frame_count % 60 == 0:
-            fps = 1.0 / (time.time() - self.last_time) * 60
-            self.fps_message = f"FPS: {fps:5.0f}"
-
-        if self.fps_message:
-            arcade.draw_text(
-                self.fps_message,
-                self.view_left + 10,
-                self.view_bottom + 40,
-                arcade.color.BLACK,
-                14,
-            )
-
-        if self.frame_count % 60 == 0:
-            self.last_time = time.time()
-
-        # Put the text on the screen.
-        # Adjust the text position based on the view port so that we don't
-        # scroll the text too.
-        distance = self.player_sprite.right
-        output = f"Distance: {distance:.0f}"
-        arcade.draw_text(
-            output, self.view_left + 10, self.view_bottom + 20, arcade.color.BLACK, 14
-        )
 
         if self.game_over:
             arcade.draw_text(
@@ -231,7 +205,8 @@ class MyGame(arcade.Window):
 
     def on_update(self, delta_time):
         """Movement and game logic"""
-
+        self.player_sprite.center_x += self.player_sprite.change_x
+        self.player_sprite.center_y += self.player_sprite.change_y
         self.pan_camera_to_user(0.1)
 
         camera_x = self.camera.position[0]
@@ -239,7 +214,7 @@ class MyGame(arcade.Window):
         for count, sprite in enumerate(self.backgrounds):
             layer = count // 2
             frame = count % 2
-            offset = camera_x / (2 ** (layer + 1))
+            offset = camera_x / (2 ** (layer + 2))
             jump = (camera_x - offset) // sprite.width
             final_offset = offset + (jump + frame) * sprite.width
             sprite.left = final_offset
@@ -259,47 +234,6 @@ class MyGame(arcade.Window):
         # example though.)
         if not self.game_over:
             self.physics_engine.update()
-
-        # --- Manage Scrolling ---
-
-        # Track if we need to change the view port
-
-        changed = False
-
-        # Scroll left
-        left_bndry = self.view_left + VIEWPORT_LEFT_MARGIN
-        if self.player_sprite.left < left_bndry:
-            self.view_left -= left_bndry - self.player_sprite.left
-            changed = True
-
-        # Scroll right
-        right_bndry = self.view_left + SCREEN_WIDTH - VIEWPORT_RIGHT_MARGIN
-        if self.player_sprite.right > right_bndry:
-            self.view_left += self.player_sprite.right - right_bndry
-            changed = True
-
-        # Scroll up
-        top_bndry = self.view_bottom + SCREEN_HEIGHT - VIEWPORT_MARGIN_TOP
-        if self.player_sprite.top > top_bndry:
-            self.view_bottom += self.player_sprite.top - top_bndry
-            changed = True
-
-        # Scroll down
-        bottom_bndry = self.view_bottom + VIEWPORT_MARGIN_BOTTOM
-        if self.player_sprite.bottom < bottom_bndry:
-            self.view_bottom -= bottom_bndry - self.player_sprite.bottom
-            changed = True
-
-        # If we need to scroll, go ahead and do it.
-        if changed:
-            self.view_left = int(self.view_left)
-            self.view_bottom = int(self.view_bottom)
-            arcade.set_viewport(
-                self.view_left,
-                SCREEN_WIDTH + self.view_left,
-                self.view_bottom,
-                SCREEN_HEIGHT + self.view_bottom,
-            )
 
 
 def main():
