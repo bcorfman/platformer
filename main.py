@@ -23,6 +23,7 @@ SPRITE_PIXEL_SIZE = 128
 GRID_PIXEL_SIZE = SPRITE_PIXEL_SIZE * TILE_SPRITE_SCALING
 MOVEMENT_SPEED = 5
 SPRITE_SCALING = 3
+BACKGROUND_SCALING = 1
 BACKGROUND_RISE_AMOUNT = 40
 
 # How many pixels to keep as a minimum margin between the character
@@ -99,16 +100,16 @@ class MyGame(arcade.Window):
         self.player_sprite.center_y = 64
         self.player_list.append(self.player_sprite)
 
-        images = [":resources:images/cybercity_background/far-buildings.png"]
+        images = ["bg.png"]
         for count, image in enumerate(images):
             bottom = rise * (len(images) - count - 1)
 
-            sprite = arcade.Sprite(image, scale=SPRITE_SCALING)
+            sprite = arcade.Sprite(image, scale=BACKGROUND_SCALING)
             sprite.bottom = bottom
             sprite.left = 0
             self.backgrounds.append(sprite)
 
-            sprite = arcade.Sprite(image, scale=SPRITE_SCALING)
+            sprite = arcade.Sprite(image, scale=BACKGROUND_SCALING)
             sprite.bottom = bottom
             sprite.left = sprite.width
             self.backgrounds.append(sprite)
